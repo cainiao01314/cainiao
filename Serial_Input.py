@@ -10,12 +10,15 @@ import re
 import linecache
 import schedule
 
-def send(topicone,topictwo,topicthree):                                     #每隔100毫秒发送一个topic信息    
+def send(topicone,topictwo,topicthree):                                     #每隔100毫秒发送一个topic信息,发送3个topic    
     serialInput.write(topicone.encode('utf-8'))                             #utf-8 编码发送
     time.sleep(0.1)
     serialInput.write(topictwo.encode('utf-8'))  
     time.sleep(0.1)
     serialInput.write(topicthree.encode('utf-8'))  
+
+def sendone(topicone):                                                      #发送一个topic信息    
+    serialInput.write(topicone.encode('utf-8'))                             
 
 if __name__ == '__main__':
     debug_comm = 'COM8'                                                     #输入串口号
@@ -26,6 +29,7 @@ if __name__ == '__main__':
     topicthree = "TEST_PUBLISH sys/thing/event/property/post_reply {'id':'789','version':'1.5','params':{'ErrorCode':1,}} QOS0 one"
       
     serialInput = serial.Serial(debug_comm, debug_baudrate, timeout=0.001)
-    schedule.every(0.3).seconds.do(send,topicone,topictwo,topicthree)       #对send函数定时执行
+    # schedule.every(0.3).seconds.do(send,topicone,topictwo,topicthree)       #对send函数定时执行，多topic循环
+    schedule.every(0.1).seconds.do(sendone,topicone)
     while True:
         schedule.run_pending()
